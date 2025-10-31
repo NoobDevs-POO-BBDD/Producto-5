@@ -464,6 +464,68 @@ END //
 
 DELIMITER ;
 
+-- ============================================= ÚLTIMOS AÑADIDOS
+
+-- =============================================
+-- PROCEDIMIENTO: sp_getPedidosEnviadosByCliente
+-- =============================================
+CREATE PROCEDURE sp_getPedidosEnviadosByCliente(IN p_email_cliente VARCHAR(100))
+BEGIN
+    SELECT p.id_pedido, p.numero_pedido, c.email, c.nombre as nombre_cliente,
+           a.codigo, a.descripcion as descripcion_articulo,
+           p.cantidad, p.fecha_hora, p.estado
+    FROM pedidos p
+    JOIN clientes c ON p.id_cliente = c.id_cliente
+    JOIN articulos a ON p.id_articulo = a.id_articulo
+    WHERE p.estado = TRUE AND c.email = p_email_cliente
+    ORDER BY p.fecha_hora DESC;
+END //
+
+-- =============================================
+-- PROCEDIMIENTO:sp_getAllPedidosByCliente
+-- =============================================
+CREATE PROCEDURE sp_getAllPedidosByCliente(IN p_email_cliente VARCHAR(100))
+BEGIN
+    SELECT p.id_pedido, p.numero_pedido, c.email, c.nombre as nombre_cliente,
+           a.codigo, a.descripcion as descripcion_articulo,
+           p.cantidad, p.fecha_hora, p.estado
+    FROM pedidos p
+    JOIN clientes c ON p.id_cliente = c.id_cliente
+    JOIN articulos a ON p.id_articulo = a.id_articulo
+    WHERE c.email = p_email_cliente
+    ORDER BY p.fecha_hora DESC;
+END //
+
+-- =============================================
+-- PROCEDIMIENTO: sp_getPedidoByNumero
+-- =============================================
+CREATE PROCEDURE sp_getPedidoByNumero(IN p_numero_pedido VARCHAR(50))
+BEGIN
+    SELECT p.id_pedido, p.numero_pedido, c.email, c.nombre as nombre_cliente,
+           a.codigo, a.descripcion as descripcion_articulo,
+           p.cantidad, p.fecha_hora, p.estado
+    FROM pedidos p
+    JOIN clientes c ON p.id_cliente = c.id_cliente
+    JOIN articulos a ON p.id_articulo = a.id_articulo
+    WHERE p.numero_pedido = p_numero_pedido;
+END //
+
+-- =============================================
+-- PROCEDIMIENTO:sp_getAllPedidos()
+-- =============================================
+CREATE PROCEDURE sp_getAllPedidos()
+BEGIN
+    SELECT p.id_pedido, p.numero_pedido, c.email, c.nombre as nombre_cliente,
+           a.codigo, a.descripcion as descripcion_articulo,
+           p.cantidad, p.fecha_hora, p.estado
+    FROM pedidos p
+    JOIN clientes c ON p.id_cliente = c.id_cliente
+    JOIN articulos a ON p.id_articulo = a.id_articulo
+    ORDER BY p.fecha_hora DESC;
+END //
+
+
+
 -- =============================================
 -- PROCEDIMIENTOS ALMACENADOS - ESTADÍSTICAS
 -- =============================================

@@ -13,10 +13,10 @@ import java.util.List;
 public class ClienteDAOImpl implements ClienteDAO {
 
     @Override
-    public Cliente getClientePorEmail(String email) throws Exception {
-        String sql = "SELECT * FROM clientes WHERE email = ?";
+    public Cliente getClientePorEmail(String email) throws SQLException {
+
         try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareCall("{CALL sp_getClienteByEmail(?)}")) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -51,11 +51,11 @@ public class ClienteDAOImpl implements ClienteDAO {
     }
 
     @Override
-    public List<Cliente> getTodosLosClientes() throws Exception {
+    public List<Cliente> getTodosLosClientes() throws SQLException {
         List<Cliente> lista = new ArrayList<>();
-        String sql = "SELECT * FROM clientes";
+
         try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareCall("{CALL sp_getAllClientes()}")) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 boolean premium = rs.getBoolean("premium");
@@ -84,13 +84,12 @@ public class ClienteDAOImpl implements ClienteDAO {
         return lista;
     }
 
-
     @Override
-    public List<Cliente> getClientesEstandar() throws Exception {
+    public List<Cliente> getClientesEstandar() throws SQLException {
         List<Cliente> lista = new ArrayList<>();
-        String sql = "SELECT * FROM clientes WHERE tipo = 'ESTANDAR'";
+
         try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareCall("{CALL sp_getclientesEstandar()}")) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 lista.add(new ClienteStandar(
@@ -106,11 +105,11 @@ public class ClienteDAOImpl implements ClienteDAO {
     }
 
     @Override
-    public List<Cliente> getClientesPremium() throws Exception {
+    public List<Cliente> getClientesPremium() throws SQLException {
         List<Cliente> lista = new ArrayList<>();
-        String sql = "SELECT * FROM clientes WHERE tipo = 'PREMIUM'";
+
         try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareCall("{CALL sp_getClientesPremium()}")) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 lista.add(new ClientePremium(
@@ -127,7 +126,51 @@ public class ClienteDAOImpl implements ClienteDAO {
     }
 
     @Override
-    public void anadirCliente(Cliente cliente) throws Exception {
-        // Lógica JDBC para anadir clientes
+    public void anadirCliente(Cliente cliente) throws SQLException {
+        Connection conn = null; //se inicia fuera para el try y finally
+
+        try{
+            conn = ConexionBD.getConnection();
+            conn.setAutoCommit(false); //iniciar la transacción
+            try(CallableStatement cs = conn.prepareCall("{CALL sp_addCliente(?,?,?,?,?,?,?)}")) {
+                cs.setString(1, cliente.getEmail());
+                cs.setString(2, cliente.getNombre());
+                cs.setString(3, cliente.getDomicilio());
+                cs.setString(4, cliente.getNIF());
+
+                if (cliente instanceof ClientePremium) {
+                    cs.setString(5, "PREMIUM");
+                    cs.setDouble(6, ((ClientePremium) cliente).getDescuentoEnvio());
+                    cs.setDouble(7, ((ClientePremium) cliente).getCuotaAnual());
+
+                } else {
+                    cs.setString(5, "ESTANDAR");
+                    cs.setNull(6, Types.DECIMAL);
+                    cs.setNull(7, Types.DECIMAL);
+                }
+
+                cs.executeUpdate();
+            }
+                conn.commit();// confirma la transacción si todo va bien
+
+        } catch (SQLException e) {
+            if (conn != null){
+                try {
+                    conn.rollback(); // se deshace la transacicón si algo falla
+                }catch (SQLException ex ) {
+                    System.err.println("Error al hacer rollback: "+ ex.getMessage());
+                }
+            }
+            throw e; // lanza erro al controlador
+        }finally {
+                if (conn != null){
+                    try{
+                        conn.close();
+                    }catch(SQLException e){
+                        System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                    }
+                }
+            }
+
     }
 }

@@ -10,15 +10,50 @@ import java.util.List;
 public class ArticuloDAOImpl implements ArticuloDAO {
 
     @Override
-    public void anadirArticulo(Articulo articulo) throws Exception {
-        // Lógica JDBC para añadir articulo
+    public void anadirArticulo(Articulo articulo) throws SQLException {
+        Connection conn = null; //es necesario para el try y finally
+
+        try {
+            conn = ConexionBD.getConnection();
+            conn.setAutoCommit(false);//inicia la transacción
+
+            try (CallableStatement cs = conn.prepareCall("{CALL sp_addArticulo(?,?,?,?,?)}")){
+
+                cs.setString(1, articulo.getCodigo());
+                cs.setString(2, articulo.getDescripcion());
+                cs.setDouble(3, articulo.getPrecioVenta());
+                cs.setDouble(4, articulo.getGastosEnvio());
+                cs.setInt(5, articulo.getTiempoPreparacion());
+
+                cs.executeUpdate();
+            }
+            conn.commit();// confirma la transacción si todo va bien
+
+        } catch (SQLException e) {
+            if (conn != null){
+                try{
+                    conn.rollback(); //se deshace la transacción si algo falla.
+                } catch (SQLException ex) {
+                    System.err.println("Error al hacer rollback: "+ ex.getMessage());
+                }
+            }
+            throw e; // lanza error al controlador
+        }finally {
+            if (conn != null){
+                try{
+                    conn.close();
+                }catch(SQLException e){
+                    System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                }
+            }
+        }
     }
 
     @Override
-    public Articulo getArticuloPorCodigo(String codigo) throws Exception {
-        String sql = "SELECT * FROM articulos WHERE codigo = ?";
+    public Articulo getArticuloPorCodigo(String codigo) throws SQLException {
+
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareCall("{CALL sp_getArticuloByCode(?)}")) {
 
             ps.setString(1, codigo);
             ResultSet rs = ps.executeQuery();
@@ -37,12 +72,11 @@ public class ArticuloDAOImpl implements ArticuloDAO {
     }
 
     @Override
-    public List<Articulo> getTodosLosArticulos() throws Exception {
+    public List<Articulo> getTodosLosArticulos() throws SQLException {
         List<Articulo> lista = new ArrayList<>();
-        String sql = "SELECT * FROM articulos";
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+             PreparedStatement ps = conn.prepareCall("{CALL sp_getAllArticulos()}");
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
