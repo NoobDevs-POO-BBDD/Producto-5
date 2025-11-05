@@ -11,7 +11,7 @@ public class Pedido {
     private boolean estado;
     private double precioTotal;
 
-    //constructor
+    // Constructor
     public Pedido(String numeroPedido, Cliente cliente, Articulo articulo, int cantidad, LocalDateTime fechaHora, boolean estado) {
         this.numeroPedido = numeroPedido;
         this.cliente = cliente;
@@ -19,10 +19,10 @@ public class Pedido {
         this.cantidad = cantidad;
         this.fechaHora = fechaHora;
         this.estado = estado;
-        this.precioTotal = calcularPrecioTotal();
+        this.precioTotal = calcularPrecioTotal(); // cálculo seguro
     }
 
-    //getters and setters
+    // Getters y setters
     public String getNumeroPedido() {
         return numeroPedido;
     }
@@ -37,14 +37,7 @@ public class Pedido {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
+        this.precioTotal = calcularPrecioTotal();
     }
 
     public Articulo getArticulo() {
@@ -53,6 +46,16 @@ public class Pedido {
 
     public void setArticulo(Articulo articulo) {
         this.articulo = articulo;
+        this.precioTotal = calcularPrecioTotal();
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+        this.precioTotal = calcularPrecioTotal();
     }
 
     public LocalDateTime getFechaHora() {
@@ -79,9 +82,13 @@ public class Pedido {
         this.precioTotal = precioTotal;
     }
 
-
-
+    // Metodo seguro para calcular el precio total
     private double calcularPrecioTotal() {
+        if (articulo == null) {
+            System.out.println("Advertencia: Pedido " + numeroPedido + " no tiene artículo asignado.");
+            return 0.0;
+        }
+
         double precioBase = articulo.getPrecioVenta() * cantidad;
         double gastosEnvio = articulo.getGastosEnvio();
 
@@ -92,10 +99,9 @@ public class Pedido {
         return precioBase + gastosEnvio;
     }
 
-
     @Override
     public String toString() {
-        return "Pedidos{" +
+        return "Pedido{" +
                 "numeroPedido='" + numeroPedido + '\'' +
                 ", cliente=" + cliente +
                 ", articulo=" + articulo +

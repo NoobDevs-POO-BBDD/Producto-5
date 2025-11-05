@@ -53,7 +53,7 @@ public class ArticuloDAOImpl implements ArticuloDAO {
     public Articulo getArticuloPorCodigo(String codigo) throws SQLException {
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareCall("{CALL sp_getArticuloByCode(?)}")) {
+             PreparedStatement ps = conn.prepareCall("{CALL sp_getArticuloByCodigo(?)}")) {
 
             ps.setString(1, codigo);
             ResultSet rs = ps.executeQuery();
