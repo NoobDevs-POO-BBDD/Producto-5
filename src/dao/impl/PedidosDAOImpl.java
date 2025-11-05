@@ -6,7 +6,7 @@ import dao.interfaces.PedidoDAO;
 import model.Articulo;
 import model.Cliente;
 import model.Pedido;
-import util.ConexionBD; // Usa la clase de conexión del proyecto
+import util.ConexionBD;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -20,7 +20,6 @@ public class PedidosDAOImpl implements PedidoDAO {
     private ClienteDAO clienteDAO;
 
     // CONSTRUCTOR PARA LA INYECCIÓN DE DEPENDENCIAS
-    //    El Miembro 4 (Fábrica) llamará a este constructor.
     public PedidosDAOImpl(ArticuloDAO articuloDAO, ClienteDAO clienteDAO) {
         this.articuloDAO = articuloDAO;
         this.clienteDAO = clienteDAO;
@@ -37,9 +36,9 @@ public class PedidosDAOImpl implements PedidoDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    String numeroPedidoDB = rs.getString("numero_pedido"); // número de pedido desde BD
-                    String emailCliente = rs.getString("email");      // email del cliente
-                    String codigoArticulo = rs.getString("codigo");   // código del artículo
+                    String numeroPedidoDB = rs.getString("numero_pedido");
+                    String emailCliente = rs.getString("email");
+                    String codigoArticulo = rs.getString("codigo");
                     int cantidad = rs.getInt("cantidad");
                     LocalDateTime fechaHora = rs.getObject("fecha_hora", LocalDateTime.class);
                     boolean estado = rs.getBoolean("estado");
