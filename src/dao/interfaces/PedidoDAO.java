@@ -1,6 +1,8 @@
 package dao.interfaces;
 
 import model.Pedido;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public interface PedidoDAO {
@@ -12,7 +14,10 @@ public interface PedidoDAO {
     List<Pedido> getTodosLosPedidos() throws Exception;
 
     // Obtener pedidos de un cliente específico
-    List<Pedido> getPedidosPorCliente(String emailCliente) throws Exception;
+
+    List<Pedido> getPedidosPendientesPorCliente(String emailCliente) throws SQLException;
+
+    List<Pedido> getPedidosEnviadosPorCliente(String emailCliente) throws SQLException;
 
     // Obtener solo pedidos pendientes
     List<Pedido> getPedidosPendientes() throws Exception;

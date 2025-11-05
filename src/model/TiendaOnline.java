@@ -120,7 +120,7 @@ public class TiendaOnline {
     }
 
     public List<Pedido> mostrarPedidosPendientes(String emailCliente) throws Exception {
-        return pedidoDAO.getPedidosPorCliente(emailCliente)
+        return pedidoDAO.getPedidosPendientesPorCliente(emailCliente)
                 .stream().filter(p -> !p.isEstado()).toList();
     }
 
@@ -129,7 +129,7 @@ public class TiendaOnline {
     }
 
     public List<Pedido> mostrarPedidosEnviados(String emailCliente) throws Exception {
-        return pedidoDAO.getPedidosPorCliente(emailCliente)
+        return pedidoDAO.getPedidosEnviadosPorCliente(emailCliente)
                 .stream().filter(Pedido::isEstado).toList();
     }
 

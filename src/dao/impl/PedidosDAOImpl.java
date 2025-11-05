@@ -85,47 +85,72 @@ public class PedidosDAOImpl implements PedidoDAO {
     }
 
     @Override
-    public List<Pedido> getPedidosPorCliente(String emailCliente) throws SQLException {
+    public List<Pedido> getPedidosPendientesPorCliente(String emailCliente) throws SQLException {
         List<Pedido> pedidos = new ArrayList<>();
+        String sql = "{CALL sp_getPedidosPendientesByCliente(?)}";
+        try (Connection con = ConexionBD.getConnection();
+            CallableStatement cs = con.prepareCall(sql)){
 
-        try (Connection con = ConexionBD.getConnection()) {
-
-            // 1. Buscar el id_cliente según el email
-            int idCliente = -1;
-            try (PreparedStatement psCliente = con.prepareStatement(
-                    "SELECT id_cliente FROM clientes WHERE email = ?")) {
-                psCliente.setString(1, emailCliente);
-                ResultSet rsCliente = psCliente.executeQuery();
-                if (rsCliente.next()) {
-                    idCliente = rsCliente.getInt("id_cliente");
-                } else {
-                    throw new SQLException("No existe ningún cliente con ese email: " + emailCliente);
-                }
-            }
-
-            // 2. Llamar al SP con el ID del cliente
-            try (CallableStatement cs = con.prepareCall("{CALL sp_getAllPedidosByCliente(?)}")) {
-                cs.setInt(1, idCliente);
-                ResultSet rs = cs.executeQuery();
-
+            cs.setString(1, emailCliente);
+            try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
-                    pedidos.add(new Pedido(
-                            rs.getString("numero_pedido"),
-                            null, // luego podrías enlazar el objeto Cliente si lo necesitas
-                            null, // y el Artículo
-                            rs.getInt("cantidad"),
-                            rs.getTimestamp("fecha_hora").toLocalDateTime(),
-                            rs.getBoolean("estado")
-                    ));
+
+                    String numeroPedidoDB = rs.getString("numero_pedido");
+                    String emailClienteBD = rs.getString("email");
+                    String codigoArticulo = rs.getString("codigo");
+                    int cantidad = rs.getInt("cantidad");
+                    LocalDateTime fechaHora = rs.getObject("fecha_hora", LocalDateTime.class);
+                    boolean estado = rs.getBoolean("estado");
+
+                    Cliente cliente = this.clienteDAO.getClientePorEmail(emailClienteBD);
+                    Articulo articulo = this.articuloDAO.getArticuloPorCodigo(codigoArticulo);
+
+                    pedidos.add(new Pedido(numeroPedidoDB, cliente, articulo, cantidad, fechaHora, estado));
                 }
             }
-
         } catch (SQLException e) {
             throw new SQLException("Error al obtener pedidos por cliente: " + e.getMessage(), e);
+        } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            return pedidos;
+    }
+
+
+    @Override
+    public List<Pedido> getPedidosEnviadosPorCliente(String emailCliente) throws SQLException {
+        List<Pedido> pedidos = new ArrayList<>();
+        String sql = "{CALL sp_getPedidosEnviadosByCliente(?)}";
+        try (Connection con = ConexionBD.getConnection();
+             CallableStatement cs = con.prepareCall(sql)){
+
+            cs.setString(1, emailCliente);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+
+                    String numeroPedidoDB = rs.getString("numero_pedido");
+                    String emailClienteBD = rs.getString("email");
+                    String codigoArticulo = rs.getString("codigo");
+                    int cantidad = rs.getInt("cantidad");
+                    LocalDateTime fechaHora = rs.getObject("fecha_hora", LocalDateTime.class);
+                    boolean estado = rs.getBoolean("estado");
+
+                    Cliente cliente = this.clienteDAO.getClientePorEmail(emailClienteBD);
+                    Articulo articulo = this.articuloDAO.getArticuloPorCodigo(codigoArticulo);
+
+                    pedidos.add(new Pedido(numeroPedidoDB, cliente, articulo, cantidad, fechaHora, estado));
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener pedidos por cliente: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return pedidos;
     }
+
 
     @Override
     public List<Pedido> getPedidosPendientes() throws SQLException {
@@ -167,7 +192,7 @@ public class PedidosDAOImpl implements PedidoDAO {
                 while (rs.next()) {
                     String numeroPedidoDB = rs.getString("numero_pedido");
                     String emailClienteBD = rs.getString("email");
-                    String codigoArticulo = rs.getString("articulo");
+                    String codigoArticulo = rs.getString("codigo");
                     int cantidad = rs.getInt("cantidad");
                     LocalDateTime fechaHora = rs.getObject("fecha_hora", LocalDateTime.class);
                     boolean estado = rs.getBoolean("estado");
