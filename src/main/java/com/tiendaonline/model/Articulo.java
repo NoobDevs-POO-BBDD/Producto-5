@@ -1,11 +1,37 @@
 package com.tiendaonline.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "articulos") // Mapea esta clase a la tabla 'articulos'
 public class Articulo {
+
+    @Id // Marca 'codigo' como la clave primaria
+    @Column(name = "codigo")
     private String codigo;
+
+    @Column(name = "descripcion")
     private String descripcion;
+
+    @Column(name = "precio_venta")
     private double precioVenta;
+
+    @Column(name = "gastos_envio")
     private double gastosEnvio;
+
+    @Column(name = "tiempo_preparacion")
     private int tiempoPreparacion;
+
+
+    public Articulo() {
+    }
+
+// class Articulo {
+//    private String codigo;
+//    private String descripcion;
+//    private double precioVenta;
+//    private double gastosEnvio;
+//    private int tiempoPreparacion;//
 
     //constructor
     public Articulo(String codigo, String descripcion, double precioVenta, double gastosEnvio, int tiempoPreparacion){
