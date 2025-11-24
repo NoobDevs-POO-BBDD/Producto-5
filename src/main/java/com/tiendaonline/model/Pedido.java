@@ -1,19 +1,34 @@
 package com.tiendaonline.model;
-
-import com.tiendaonline.model.Articulo;
 import com.tiendaonline.model.Cliente;
 import com.tiendaonline.model.ClientePremium;
-
+import com.tiendaonline.model.Articulo;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name="pedidos")
 public class Pedido {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idPedido;
+    @Column(name = "numero_pedido", nullable = false, unique = true)
     private String numeroPedido;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="id_articulo", nullable = false)
     private Articulo articulo;
+    @Column(nullable = false)
     private int cantidad;
+    @Column(name = "fecha_hora", nullable = false)
     private LocalDateTime fechaHora;
+    @Column(nullable = false)
     private boolean estado;
+    @Transient
     private double precioTotal;
+
+    public Pedido() {}
 
     // Constructor
     public Pedido(String numeroPedido, Cliente cliente, Articulo articulo, int cantidad, LocalDateTime fechaHora, boolean estado) {
