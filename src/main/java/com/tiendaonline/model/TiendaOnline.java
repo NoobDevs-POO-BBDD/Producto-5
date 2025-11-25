@@ -2,7 +2,6 @@ package com.tiendaonline.model;
 
 import com.tiendaonline.dao.factory.DAOFactory;
 import com.tiendaonline.dao.factory.JpaDAOFactory;
-import com.tiendaonline.dao.factory.MySqlDAOFactory;
 import com.tiendaonline.dao.interfaces.ArticuloDAO;
 import com.tiendaonline.dao.interfaces.ClienteDAO;
 import com.tiendaonline.dao.interfaces.PedidoDAO;

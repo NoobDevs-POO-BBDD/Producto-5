@@ -1,11 +1,10 @@
-package com.tiendaonline.test.onlinestore.tests;
+package com.tiendaonline.test.onlinestore.tests; // Asegúrate de que el paquete sea correcto según tu carpeta
 
-import org.junit.Test;
-//import org.junit.jupiter.api.Test;
+// --- CAMBIOS AQUÍ: Usamos los imports de JUnit 5 (Jupiter) ---
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.tiendaonline.model.Articulo;
-
-import static org.junit.Assert.assertEquals;
-//import static org.junit.jupiter.api.Assertions.*;
 
 public class ArticuloTest {
 
@@ -15,11 +14,13 @@ public class ArticuloTest {
 
         assertEquals("A001", articulo.getCodigo());
         assertEquals("Libro", articulo.getDescripcion());
-        assertEquals(25.0, articulo.getPrecioVenta());
-        assertEquals(5.0, articulo.getGastosEnvio());
+
+        // En JUnit 5, assertEquals para doubles también admite un "delta" (margen de error)
+        assertEquals(25.0, articulo.getPrecioVenta(), 0.001);
+        assertEquals(5.0, articulo.getGastosEnvio(), 0.001);
+
         assertEquals(2, articulo.getTiempoPreparacion());
     }
-
 
     @Test
     public void testSetters() {
@@ -33,11 +34,12 @@ public class ArticuloTest {
 
         assertEquals("B002", articulo.getCodigo());
         assertEquals("Cuaderno", articulo.getDescripcion());
-        assertEquals(30.0, articulo.getPrecioVenta());
-        assertEquals(7.5, articulo.getGastosEnvio());
+
+        assertEquals(30.0, articulo.getPrecioVenta(), 0.001);
+        assertEquals(7.5, articulo.getGastosEnvio(), 0.001);
+
         assertEquals(3, articulo.getTiempoPreparacion());
     }
-
 
     @Test
     public void testToString() {
