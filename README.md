@@ -1,6 +1,4 @@
 # Producto-4
 
-Ramas existentes gitflow:
-Main
-develop
-annahico - Mar - Thabta - Kevin
+
+Annahico - Mar - Thabata - Kevin
