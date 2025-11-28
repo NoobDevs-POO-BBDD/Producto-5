@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="20.0"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.tiendaonline.controller.PedidoController">
+
+    <Label text="Gestión de Pedidos" textFill="#f44336">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+    <Label text="Aquí irán los filtros y la creación de pedidos" />
+
+</VBox>

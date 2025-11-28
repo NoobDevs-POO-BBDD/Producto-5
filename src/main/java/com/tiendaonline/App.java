@@ -1,29 +1,42 @@
 package com.tiendaonline;
-import com.tiendaonline.dao.factory.JpaDAOFactory;
+
+import com.tiendaonline.controller.MainController;
 import com.tiendaonline.model.TiendaOnline;
-import com.tiendaonline.view.Vista;
-import com.tiendaonline.controller.Controlador;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-/**
- * Clase principal dónde se une el modelo la vista y el controlador.
- */
-public class App {
-    public static void main(String[] args) throws Exception {
+import java.io.IOException;
 
-        TiendaOnline modelo = new TiendaOnline(); // sin pasar DAOs
+public class App extends Application {
 
-        //Se crea la vista
-        Vista vista = new Vista();
+    private static Scene scene;
 
-        //Se crea el controlador pasandole la vista y el modelo
-        Controlador controlador = new Controlador(vista, modelo);
+    @Override
+    public void start(Stage stage) throws IOException {
+        TiendaOnline modelo = new TiendaOnline();
+        try {
+            modelo.cargarDatosDePrueba();
+        } catch (Exception e) {
+            System.err.println("Aviso: Datos ya existentes o error al cargar.");
+        }
 
-        //Se manda a vista el controlador para que puedan interactuar
-        vista.setControlador(controlador);
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/view/MainView.fxml"));
+        Parent root = fxmlLoader.load();
 
-        //Se inicia la aplicación meidiante el controlador
-        controlador.iniciar();
+        MainController controller = fxmlLoader.getController();
+        controller.setModelo(modelo);
+
+        //Preparamos la Escena y el Escenario (Stage)
+        scene = new Scene(root, 800, 600);
+        stage.setTitle("Tienda Online - Gestión MVC");
+        stage.setScene(scene);
+        stage.show();
     }
 
+    public static void main(String[] args) {
+        launch();
+    }
 }
-
