@@ -6,6 +6,7 @@ import com.tiendaonline.dao.interfaces.ArticuloDAO;
 import com.tiendaonline.dao.interfaces.ClienteDAO;
 import com.tiendaonline.dao.interfaces.PedidoDAO;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TiendaOnline {
@@ -104,6 +105,11 @@ public class TiendaOnline {
     public void marcarPedidoComoEnviado(String numeroPedido) throws Exception {
         if (pedidoDAO == null) return;
         pedidoDAO.marcarPedidoEnviado(numeroPedido);
+    }
+
+    public List<Pedido> mostrarPedidos() throws Exception {
+        if (pedidoDAO == null) return new ArrayList<>();
+        return new ArrayList<>(pedidoDAO.getTodosLosPedidos());
     }
 
     public List<Pedido> mostrarPedidosPendientes() throws Exception {
