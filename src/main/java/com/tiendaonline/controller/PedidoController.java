@@ -20,7 +20,7 @@ public class PedidoController {
 
     private TiendaOnline modelo;
 
-    // --- ELEMENTOS DE LA VISTA (FXML), SE DEBEN USAR LOS MISMOS ID EN LA VISTA ---
+    // --- ELEMENTOS DE LA VISTA (FXML) ---
     @FXML private TableView<Pedido> tablaPedidos;
     @FXML private TableColumn<Pedido, String> colNumero;
     @FXML private TableColumn<Pedido, String> colFecha;
@@ -30,7 +30,7 @@ public class PedidoController {
     @FXML private TableColumn<Pedido, Double> colTotal;
     @FXML private TableColumn<Pedido, String> colEstado;
 
-    //Formulario de Alta
+    // Formulario de Alta
     @FXML private ComboBox<Cliente> comboClientes;
     @FXML private ComboBox<Articulo> comboArticulos;
     @FXML private TextField txtNumeroPedido;
@@ -41,73 +41,101 @@ public class PedidoController {
     @FXML private RadioButton radioTodos;
     @FXML private RadioButton radioPendientes;
     @FXML private RadioButton radioEnviados;
-    @FXML private ToggleGroup grupoFiltros; // Para agrupar los radio buttons
+    @FXML private ToggleGroup grupoFiltros;
 
     /**
-     * Método llamado por el MainController al nevegar a esta vista
-     * Prepara el entorno grafico
-     * @param modelo
+     * Inicializado desde MainController
      */
     public void setModelo(TiendaOnline modelo) {
         this.modelo = modelo;
-        //inicializarCombos(); // Cargar desplegables  DESCOMENTAR CUANDO ESTÉ LA VISTA CON LOS ID
-       // configurarColumnasTabla(); //Como se leeran los datos  DESCOMENTAR CUANDO ESTÉ LA VISTA  CON LOS ID
-        refrescarTabla();    // Cargar tabla
+        inicializarCombos();
+        configurarColumnasTabla();
+        refrescarTabla();
     }
 
-    // --- ACCIONES PRINCIPALES ---
+    // -------------------------
+    // ACCIONES
+    // -------------------------
 
     @FXML
     public void onBotonAnadirPedidoClick(ActionEvent event) {
-        System.out.println("Botón Añadir Pedido pulsado");
-        // TODO
-        // 1. Obtener Cliente seleccionado del ComboBox.
-        // 2. Obtener Artículo seleccionado del ComboBox.
-        // 3. Leer cantidad y numero de pedido.
-        // 4. Llamar a modelo.anadirPedido(...).
-        refrescarTabla();
+        try {
+            Cliente cliente = comboClientes.getValue();
+            Articulo articulo = comboArticulos.getValue();
+            String numeroPedido = txtNumeroPedido.getText();
+            int cantidad = Integer.parseInt(txtCantidad.getText());
+
+            if (cliente == null || articulo == null || numeroPedido.isEmpty() || cantidad <= 0) {
+                mostrarAlerta("Campos incompletos", "Debes seleccionar cliente, artículo y cantidad válida.");
+                return;
+            }
+
+            modelo.anadirPedido(numeroPedido, cliente.getEmail(), articulo.getCodigo(), cantidad);
+
+            refrescarTabla();
+            limpiarFormulario();
+            mostrarAlerta("Pedido añadido", "El pedido se ha añadido correctamente.");
+
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error de formato", "La cantidad debe ser un número entero.");
+        } catch (Exception e) {
+            mostrarAlerta("Error", e.getMessage());
+        }
     }
 
     @FXML
     public void onBotonEliminarPedidoClick(ActionEvent event) {
-        System.out.println("Botón Eliminar pulsado");
-        // TODO
-        // 1. Obtener el pedido seleccionado en la Tabla.
-        // 2. Llamar a modelo.eliminarPedido(id).
-        // 3. Gestionar la excepción si el pedido ya está enviado (mostrar Alerta).
+        Pedido seleccionado = tablaPedidos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Error", "Debe seleccionar un pedido para eliminar");
+            return;
+        }
 
-        refrescarTabla();
+        try {
+            boolean eliminado = modelo.eliminarPedido(seleccionado.getNumeroPedido());
+            if (!eliminado) {
+                mostrarAlerta("Error", "No se puede eliminar un pedido enviado");
+            } else {
+                refrescarTabla();
+                mostrarAlerta("Éxito", "Pedido eliminado correctamente");
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error", e.getMessage());
+        }
     }
 
     @FXML
     public void onBotonMarcarEnviadoClick(ActionEvent event) {
-        // TODO
-        // Lógica para cambiar estado a enviado.
+        Pedido seleccionado = tablaPedidos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Error", "Debe seleccionar un pedido para marcar como enviado");
+            return;
+        }
 
-        refrescarTabla();
+        try {
+            modelo.marcarPedidoComoEnviado(seleccionado.getNumeroPedido());
+            refrescarTabla();
+            mostrarAlerta("Éxito", "Pedido marcado como enviado");
+        } catch (Exception e) {
+            mostrarAlerta("Error", e.getMessage());
+        }
     }
+
+    // -------------------------
+    // FILTROS
+    // -------------------------
 
     @FXML
     public void onFiltrarPedidos(ActionEvent event) {
-        System.out.println("Aplicando filtros...");
-        // TODO
-        // Este método debe combinar los filtros:
-        // - ¿Está marcado el CheckBox/Radio "Solo Pendientes"?
-        // - ¿Hay texto en el campo "Buscar por Email"?
-        // Llamar a modelo.mostrarPedidosPendientes(email) o el que corresponda.
-
         refrescarTabla();
     }
 
-    // --- INICIALIZACIÓN / CONFIGURACIÓN ---
+    // -------------------------
+    // INICIALIZACIÓN
+    // -------------------------
 
-    /**
-     * Convierte las listas de la BBDD en listas visuales para los ComboBox.
-     * También define cómo se "pintan" los objetos en el desplegable (ej. Nombre + Email).
-     */
     private void inicializarCombos() {
         try {
-            // Convertimos las listas normales de Java a ObservableList de JavaFX
             ObservableList<Cliente> clientesOl = FXCollections.observableArrayList(modelo.mostrarClientes());
             ObservableList<Articulo> articulosOl = FXCollections.observableArrayList(modelo.mostrarArticulos());
 
@@ -137,35 +165,77 @@ public class PedidoController {
         }
     }
 
-    /**
-     * Define qué atributo del objeto 'Pedido' va en cada columna de la tabla.
-     */
     private void configurarColumnasTabla() {
-        // Configuración estándar para campos directos
         colNumero.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNumeroPedido()));
         colCantidad.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getCantidad()));
         colTotal.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPrecioTotal()));
 
-        // Configuración para campos anidados (Cliente dentro de Pedido)
-        colClienteEmail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCliente().getEmail()));
-        colArticuloCodigo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getArticulo().getCodigo()));
+        colClienteEmail.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getCliente().getEmail()));
 
-        // Formato de fecha y estado
+        colArticuloCodigo.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getArticulo().getCodigo()));
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFechaHora().format(formatter)));
+        colFecha.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getFechaHora().format(formatter)));
 
-        colEstado.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().isEstado() ? "Enviado" : "Pendiente"
-        ));
+        colEstado.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().isEstado() ? "Enviado" : "Pendiente")
+        );
     }
 
+    // -------------------------
+    // REFRESCO DE TABLA
+    // -------------------------
+
     private void refrescarTabla() {
-        if (modelo != null) {
-            // TODO: Miembro 4
-            // 1. Mirar qué filtros hay puestos (RadioButtons, TextField email)
-            // 2. Pedir la lista correcta al modelo (modelo.mostrarPedidosPendientes(), etc.)
-            // 3. Actualizar la TableView
-            System.out.println("Refrescando tabla pedidos con filtros...");
+        try {
+            List<Pedido> pedidos;
+
+            String emailFiltro = txtFiltroEmail.getText().trim();
+
+            if (radioPendientes.isSelected()) {
+                pedidos = emailFiltro.isEmpty() ?
+                        modelo.mostrarPedidosPendientes() :
+                        modelo.mostrarPedidosPendientes(emailFiltro);
+
+            } else if (radioEnviados.isSelected()) {
+                pedidos = emailFiltro.isEmpty() ?
+                        modelo.mostrarPedidosEnviados() :
+                        modelo.mostrarPedidosEnviados(emailFiltro);
+
+            } else { // Todos
+                pedidos = modelo.mostrarPedidos();
+
+                if (!emailFiltro.isEmpty()) {
+                    pedidos.removeIf(p -> !p.getCliente().getEmail().contains(emailFiltro));
+                }
+            }
+
+            tablaPedidos.setItems(FXCollections.observableArrayList(pedidos));
+
+        } catch (Exception e) {
+            mostrarAlerta("Error al refrescar tabla", e.getMessage());
         }
+    }
+
+    // -------------------------
+    // AUXILIARES
+    // -------------------------
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void limpiarFormulario() {
+        txtNumeroPedido.clear();
+        txtCantidad.clear();
+        comboClientes.getSelectionModel().clearSelection();
+        comboArticulos.getSelectionModel().clearSelection();
     }
 }
