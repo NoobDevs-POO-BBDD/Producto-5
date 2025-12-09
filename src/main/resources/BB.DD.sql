@@ -568,6 +568,13 @@ BEGIN
 END //
 
 DELIMITER ;
+-- =============================================
+-- ALTERACIÓN PARA GUARDAR EL PRECIO TOTAL
+-- =============================================
+
+--Añadir la columna precio_total a la tabla pedidos
+ALTER TABLE pedidos
+ADD COLUMN precio_total DECIMAL(10,2) NOT NULL DEFAULT 0;
 
 -- =============================================
 -- VERIFICACIÓN Y PRUEBAS
