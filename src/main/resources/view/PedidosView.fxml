@@ -1,17 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="20.0"
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="800.0" spacing="15.0"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.tiendaonline.controller.PedidoController">
 
-    <Label text="Gestión de Pedidos" textFill="#f44336">
+    <!-- TITULO -->
+    <Label text="Gestión de Pedidos" textFill="red">
         <font>
-            <Font size="20.0" />
+            <Font size="24" />
         </font>
     </Label>
-    <Label text="Aquí irán los filtros y la creación de pedidos" />
+    <Label text="Administra, filtra y crea pedidos" >
+        <font>
+            <Font size="15" />
+        </font>
+    </Label>
+    <!-- TABLA DE PEDIDOS -->
+    <ScrollPane fitToWidth="true" prefHeight="250">
+        <TableView fx:id="tablaPedidos" prefHeight="250">
+            <columns>
+                <TableColumn fx:id="colNumero" text="Número Pedido" prefWidth="100"/>
+                <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
+                <TableColumn fx:id="colClienteEmail" text="Cliente Email" prefWidth="150"/>
+                <TableColumn fx:id="colArticuloCodigo" text="Artículo Código" prefWidth="120"/>
+                <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="50"/>
+                <TableColumn fx:id="colTotal" text="Total (€)" prefWidth="100"/>
+                <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </ScrollPane>
+
+    <!-- FORMULARIO PARA CREAR PEDIDO -->
+    <VBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+        <Label text="Nuevo Pedido" style="-fx-font-weight: bold;">
+            <font>
+                <Font size="15" />
+            </font>
+        </Label>
+
+        <Label text="Cliente:"/>
+        <ComboBox fx:id="comboClientes" prefWidth="300"/>
+
+        <Label text="Artículo:"/>
+        <ComboBox fx:id="comboArticulos" prefWidth="300"/>
+
+        <Label text="Número Pedido:"/>
+        <TextField fx:id="txtNumeroPedido" maxWidth="300"/>
+
+        <Label text="Cantidad:"/>
+        <TextField fx:id="txtCantidad" maxWidth="300"/>
+
+        <HBox spacing="10">
+            <Button text="Añadir Pedido"
+                    onAction="#onBotonAnadirPedidoClick"
+                    style="-fx-background-color: #2E7D32;
+                   -fx-text-fill: #ffffff;
+                   -fx-font-weight: bold;
+                   -fx-background-radius: 6;"/>
+
+            <Button text="Eliminar Pedido"
+                    onAction="#onBotonEliminarPedidoClick"
+                    style="-fx-background-color: #C62828;
+                   -fx-text-fill: #ffffff;
+                   -fx-font-weight: bold;
+                   -fx-background-radius: 6;"/>
+
+            <Button text="Marcar como Enviado"
+                    onAction="#onBotonMarcarEnviadoClick"
+                    style="-fx-background-color: #1565C0;
+                   -fx-text-fill: #ffffff;
+                   -fx-font-weight: bold;
+                   -fx-background-radius: 6;"/>
+        </HBox>
+    </VBox>
+
+    <!-- FILTROS -->
+    <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+        <Label text="Filtrar por estado:"/>
+        <RadioButton fx:id="radioTodos" text="Todos" toggleGroup="$grupoFiltros" selected="true"/>
+        <RadioButton fx:id="radioPendientes" text="Pendientes" toggleGroup="$grupoFiltros"/>
+        <RadioButton fx:id="radioEnviados" text="Enviados" toggleGroup="$grupoFiltros"/>
+
+        <Label text="Buscar por Email:"/>
+        <TextField fx:id="txtFiltroEmail" promptText="email cliente"/>
+
+        <Button text="Aplicar filtros"
+                onAction="#onFiltrarPedidos"
+                style="-fx-background-color: #2E7D32;
+                   -fx-text-fill: #ffffff;
+                   -fx-font-weight: bold;
+                   -fx-background-radius: 6;"/>
+    </HBox>
 
 </VBox>
