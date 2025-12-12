@@ -105,7 +105,6 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Parent vista = loader.load();
-
             Object controller = loader.getController();
             if (controller instanceof ClienteController) {
                 ((ClienteController) controller).setModelo(this.modelo);
