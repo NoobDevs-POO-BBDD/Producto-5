@@ -27,7 +27,7 @@ public class TiendaOnline {
     }
 
     // ===================== CLIENTES =====================
-    public Cliente anadirCliente(String email, String nombre, String domicilio, String nif, boolean premium) throws Exception {
+    public Cliente anadirCliente(String email, String nombre, String domicilio, String nif, boolean premium, double cuota) throws Exception {
         Cliente cliente;
         if (premium) {
             cliente = new ClientePremium(email, nombre, domicilio, nif, ClientePremium.DESCUENTO_ENVIO_PREMIUM, ClientePremium.CUOTA_ANUAL_PREMIUM);
@@ -222,7 +222,8 @@ public class TiendaOnline {
 
     private void anadirClienteSeguro(String email, String nombre, String dom, String nif, boolean prem) {
         try {
-            anadirCliente(email, nombre, dom, nif, prem);
+            double cuota = 0;
+            anadirCliente(email, nombre, dom, nif, prem, cuota);
         } catch (Exception e) { /* Ignorar si ya existe */ }
     }
 
@@ -242,5 +243,17 @@ public class TiendaOnline {
         try {
             marcarPedidoComoEnviado(num);
         } catch (Exception e) { /* Ignorar si falla */ }
+    }
+
+    public List<Cliente> getListaClientes() {
+        return List.of();
+    }
+
+    public List<Cliente> getListaClientesEstandar() {
+        return List.of();
+    }
+
+    public List<Cliente> getListaClientesPremium() {
+        return List.of();
     }
 }

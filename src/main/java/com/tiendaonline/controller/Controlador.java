@@ -35,7 +35,8 @@ public class Controlador {
     // Gestión de clientes.
     public void solicitarAnadirCliente(String email, String nombre, String domicilio, String nif, Boolean premium){
         try {
-            modelo.anadirCliente(email, nombre, domicilio, nif,premium);
+            double cuota = 0;
+            modelo.anadirCliente(email, nombre, domicilio, nif,premium, cuota);
             vistaCliente.clienteAnadido();
         } catch (IllegalArgumentException e) {
             // CAMBIO: Quitamos SQLException porque tu DAO JPA ya no la lanza.

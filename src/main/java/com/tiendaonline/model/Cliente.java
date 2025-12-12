@@ -1,18 +1,18 @@
 package com.tiendaonline.model;
 
-import jakarta.persistence.*; // Usamos jakarta (JPA 3.0)
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "clientes")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Tabla única para todos los clientes
-@DiscriminatorColumn(name = "tipo_cliente", discriminatorType = DiscriminatorType.STRING) // Columna que diferencia tipos
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_cliente", discriminatorType = DiscriminatorType.STRING)
 public abstract class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cliente")
-    protected int id; // ID interno necesario para Hibernate
+    protected int id;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
@@ -23,22 +23,25 @@ public abstract class Cliente implements Serializable {
     @Column(name = "domicilio")
     private String domicilio;
 
+    // CAMBIO 1: Nombre del campo en Java en minúsculas para coincidir con la convención del getter
     @Column(name = "nif", nullable = false)
-    private String NIF;
+    private String nif;
 
     // Constructor vacío (Obligatorio para JPA)
     public Cliente() {
     }
 
     // Constructor con parámetros
-    public Cliente(String email, String nombre, String domicilio, String NIF) {
+    public Cliente(String email, String nombre, String domicilio, String nif) {
         this.email = email;
         this.nombre = nombre;
         this.domicilio = domicilio;
-        this.NIF = NIF;
+        this.nif = nif; // Usamos el campo nif en minúscula
     }
 
-    // Getters y Setters
+    // --- Getters y Setters ---
+
+    // Getters para JavaFX TableView (nif en minúsculas)
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -51,8 +54,26 @@ public abstract class Cliente implements Serializable {
     public String getDomicilio() { return domicilio; }
     public void setDomicilio(String domicilio) { this.domicilio = domicilio; }
 
-    public String getNIF() { return NIF; }
-    public void setNIF(String NIF) { this.NIF = NIF; }
+    // CAMBIO 2: Getter en minúsculas para compatibilidad con PropertyValueFactory("nif")
+    // Se asume que en el controlador has usado PropertyValueFactory("nif")
+    public String getNif() { return nif; }
+    public void setNif(String nif) { this.nif = nif; }
+
+
+    // CAMBIO 3: Método VITAL para la columna 'Tipo' de la TableView
+    // Se llama 'getTipoCliente' porque en tu FXML se usa PropertyValueFactory("tipoCliente")
+    public String getTipoCliente() {
+        // Usa 'instanceof' para determinar la clase real del objeto cargado por JPA
+        if (this instanceof ClientePremium) {
+            return "Premium";
+        }
+        if (this instanceof ClienteStandar) {
+            return "Estándar";
+        }
+        return "Desconocido"; // Fallback
+    }
+
+    // --- Métodos de Negocio y Utilidad ---
 
     @Override
     public String toString() {
@@ -61,7 +82,7 @@ public abstract class Cliente implements Serializable {
                 ", email='" + email + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", domicilio='" + domicilio + '\'' +
-                ", NIF='" + NIF + '\'' +
+                ", nif='" + nif + '\'' +
                 '}';
     }
 }
