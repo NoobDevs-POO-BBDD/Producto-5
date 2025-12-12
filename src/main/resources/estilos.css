@@ -9,8 +9,6 @@
     -fx-background-size: cover;
 }
 
-/* --- Opción 1: Sombra Intensa --- */
-
 /* Título Principal */
 .lbl-bienvenida {
     -fx-text-fill: white;
