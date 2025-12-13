@@ -7,17 +7,24 @@
 
 <VBox spacing="15" alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.tiendaonline.controller.ArticuloController"
-      style="-fx-background-color: #f4f4f4;">
+      style="-fx-background-color: #f4f4f4;" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://javafx.com/fxml ">
 
-    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
     <Label text="Gestión de Artículos" textFill="#333333">
-        <font><Font size="24" name="System Bold"/></font>
+        <font>
+            <Font size="24" name="System Bold"/>
+        </font>
     </Label>
 
     <TitledPane text="Detalle del Artículo" collapsible="false" expanded="true">
         <GridPane hgap="10" vgap="10">
-            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
 
             <Label text="Código:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
 
@@ -28,7 +35,8 @@
             </HBox>
 
             <Label text="Descripción:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-            <TextField fx:id="txtDescripcion" promptText="Nombre del producto" GridPane.rowIndex="0" GridPane.columnIndex="3" prefWidth="200"/>
+            <TextField fx:id="txtDescripcion" promptText="Nombre del producto" GridPane.rowIndex="0"
+                       GridPane.columnIndex="3" prefWidth="200"/>
 
             <Label text="Precio (€):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
             <TextField fx:id="txtPrecio" promptText="0.00" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
@@ -39,7 +47,8 @@
             <Label text="Tiempo (min):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
             <TextField fx:id="txtTiempo" promptText="Ej: 30" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-            <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="4">
+            <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                  GridPane.columnSpan="4">
                 <Button text="Limpiar" onAction="#onLimpiarClick"
                         style="-fx-background-color: #9E9E9E; -fx-text-fill: white; -fx-cursor: hand;"/>
 

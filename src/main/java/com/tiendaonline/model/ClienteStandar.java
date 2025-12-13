@@ -17,7 +17,8 @@ public class ClienteStandar extends Cliente {
         super();
     }
 
-    // Constructor con parámetros original
+    // Constructor con parámetros
+    // Llama al constructor del padre (Cliente)
     public ClienteStandar(String email, String nombre, String domicilio, String NIF, double descuentoEnvio) {
         super(email, nombre, domicilio, NIF);
         this.descuentoEnvio = descuentoEnvio;
@@ -33,6 +34,12 @@ public class ClienteStandar extends Cliente {
 
     @Override
     public String toString() {
+        // Llama al toString() del padre (Cliente), que incluye el NIF en mayúsculas
         return super.toString() + " (Tipo: Estandar)";
     }
+
+    // ----------------------------------------------------
+    // ❌ MÉTODO ELIMINADO: public String getNIF() { return ""; }
+    // ----------------------------------------------------
+    // La clase ahora hereda correctamente getNIF() y setNIF() del padre Cliente.
 }

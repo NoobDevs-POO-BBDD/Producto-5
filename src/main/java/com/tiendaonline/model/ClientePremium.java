@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @DiscriminatorValue("PREMIUM")
 public class ClientePremium extends Cliente {
 
-    // Las constantes se quedan igual (JPA las ignora al ser static final)
     public static final double DESCUENTO_ENVIO_PREMIUM = 20.0;
     public static final int CUOTA_ANUAL_PREMIUM = 30;
 
@@ -16,12 +15,12 @@ public class ClientePremium extends Cliente {
     @Column(name = "cuota_anual")
     private int cuotaAnual;
 
-    // Constructor vacío (Obligatorio para JPA)
     public ClientePremium() {
         super();
     }
 
-    // Constructor con parámetros original
+    // 💡 Nota: Usas 'NIF' en mayúsculas aquí, lo cual está bien
+    // porque el constructor del padre tiene el parámetro 'nif' en minúsculas.
     public ClientePremium(String email, String nombre, String domicilio, String NIF, double descuentoEnvio, int cuotaAnual) {
         super(email, nombre, domicilio, NIF);
         this.descuentoEnvio = descuentoEnvio;
@@ -33,6 +32,9 @@ public class ClientePremium extends Cliente {
 
     public int getCuotaAnual() { return cuotaAnual; }
     public void setCuotaAnual(int cuotaAnual) { this.cuotaAnual = cuotaAnual; }
+
+    // El método getNIF() ha sido ELIMINADO.
+    // Ahora, los tests llamarán a Cliente.getNIF() (el método puente)
 
     @Override
     public String toString() {

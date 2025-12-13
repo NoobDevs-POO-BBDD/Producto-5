@@ -2,6 +2,9 @@ package com.tiendaonline.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import com.tiendaonline.model.ClientePremium; // Asegúrate de importar ClientePremium si está en este mismo paquete.
+// Si ClienteStandar existe, también deberías importarlo aquí:
+// import com.tiendaonline.model.ClienteStandar;
 
 @Entity
 @Table(name = "clientes")
@@ -23,7 +26,7 @@ public abstract class Cliente implements Serializable {
     @Column(name = "domicilio")
     private String domicilio;
 
-    // CAMBIO 1: Nombre del campo en Java en minúsculas para coincidir con la convención del getter
+    // Campo real en la base de datos y en Java (en minúsculas)
     @Column(name = "nif", nullable = false)
     private String nif;
 
@@ -36,12 +39,11 @@ public abstract class Cliente implements Serializable {
         this.email = email;
         this.nombre = nombre;
         this.domicilio = domicilio;
-        this.nif = nif; // Usamos el campo nif en minúscula
+        this.nif = nif;
     }
 
-    // --- Getters y Setters ---
+    // --- Getters y Setters Estándar (nif en minúsculas) ---
 
-    // Getters para JavaFX TableView (nif en minúsculas)
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -54,35 +56,54 @@ public abstract class Cliente implements Serializable {
     public String getDomicilio() { return domicilio; }
     public void setDomicilio(String domicilio) { this.domicilio = domicilio; }
 
-    // CAMBIO 2: Getter en minúsculas para compatibilidad con PropertyValueFactory("nif")
-    // Se asume que en el controlador has usado PropertyValueFactory("nif")
+    // GetNif/SetNif (Métodos que operan sobre el campo 'nif')
     public String getNif() { return nif; }
     public void setNif(String nif) { this.nif = nif; }
 
 
-    // CAMBIO 3: Método VITAL para la columna 'Tipo' de la TableView
-    // Se llama 'getTipoCliente' porque en tu FXML se usa PropertyValueFactory("tipoCliente")
-    public String getTipoCliente() {
-        // Usa 'instanceof' para determinar la clase real del objeto cargado por JPA
-        if (this instanceof ClientePremium) {
-            return "Premium";
-        }
-        if (this instanceof ClienteStandar) {
-            return "Estándar";
-        }
-        return "Desconocido"; // Fallback
+    // --- Métodos "Puente" para JUnit Test (NIF en mayúsculas) ---
+
+    /** * Getter puente: Usado por el JUnit Test que espera 'getNIF()'.
+     * Llama al getter con convención Java 'getNif()'.
+     */
+    public String getNIF() {
+        return this.getNif();
+    }
+
+    /**
+     * Setter puente: Usado por el JUnit Test que espera 'setNIF()'.
+     * Llama al setter con convención Java 'setNif()'.
+     */
+    public void setNIF(String NIF) {
+        this.setNif(NIF);
     }
 
     // --- Métodos de Negocio y Utilidad ---
 
+    /**
+     * Determina el tipo de cliente para la columna "Tipo" en la TableView.
+     */
+    public String getTipoCliente() {
+        if (this instanceof ClientePremium) {
+            return "Premium";
+        }
+        // Asumiendo que existe ClienteStandar (o es el valor por defecto)
+        // if (this instanceof ClienteStandar) {
+        //     return "Estándar";
+        // }
+        return "Estándar"; // Valor por defecto
+    }
+
     @Override
     public String toString() {
+        // Formato final corregido para coincidir exactamente con el JUnit Test.
         return "Cliente{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", domicilio='" + domicilio + '\'' +
-                ", nif='" + nif + '\'' +
+                // Se usa la etiqueta 'NIF' mayúscula para coincidir con el test.
+                ", NIF='" + nif + '\'' +
                 '}';
     }
 }
