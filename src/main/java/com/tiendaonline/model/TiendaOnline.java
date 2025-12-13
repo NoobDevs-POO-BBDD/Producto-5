@@ -78,6 +78,12 @@ public class TiendaOnline {
         return articuloDAO.getArticuloPorCodigo(codigo);
     }
 
+    public void eliminarArticulo(String codigo) throws Exception {
+        if (articuloDAO == null) throw new Exception("Error crítico: ArticuloDAO es NULL.");
+        // Llamamos al DAO que actualizamos en el paso anterior
+        articuloDAO.eliminarArticulo(codigo);
+    }
+
     // ===================== PEDIDOS =====================
     public void anadirPedido(String numeroPedido, String emailCliente, String codigoArticulo, int cantidad) throws Exception {
         if (pedidoDAO == null) throw new Exception("Error crítico: PedidoDAO es NULL. Revisa JpaDAOFactory.");

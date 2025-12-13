@@ -1,0 +1,25 @@
+#MainView {
+    -fx-background-color: #f4f4f4;
+}
+
+#vistaBienvenida {
+    -fx-background-image: url("fondo.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+}
+
+/* Título Principal */
+.lbl-bienvenida {
+    -fx-text-fill: white;
+    /* Sombra negra fuerte y difuminada */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.85), 20, 0.4, 0, 0);
+}
+
+/* Créditos */
+.lbl-creditos {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    /* Sombra más pequeña y definida */
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,1.0), 3, 0.0, 0, 1);
+}

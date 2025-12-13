@@ -49,4 +49,38 @@ public class ArticuloDAOJpaImpl implements ArticuloDAO {
         TypedQuery<Articulo> query = em.createQuery(jpql, Articulo.class);
         return query.getResultList();
     }
+
+    @Override
+    public void eliminarArticulo(String codigo) throws Exception {
+        try {
+            em.getTransaction().begin();
+
+            // 1. Primero buscamos el artículo dentro de la transacción actual
+            // Necesitamos la referencia del objeto para poder borrarlo
+            String jpql = "SELECT a FROM Articulo a WHERE a.codigo = :codigo";
+            Articulo articulo = null;
+
+            try {
+                articulo = em.createQuery(jpql, Articulo.class)
+                        .setParameter("codigo", codigo)
+                        .getSingleResult();
+            } catch (Exception e) {
+                articulo = null;
+            }
+
+            // 2. Si existe, lo borramos
+            if (articulo != null) {
+                em.remove(articulo);
+            } else {
+                throw new Exception("El artículo con código " + codigo + " no existe.");
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        }
+    }
 }

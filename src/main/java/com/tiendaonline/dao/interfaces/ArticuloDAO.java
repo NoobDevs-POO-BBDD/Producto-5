@@ -13,4 +13,7 @@ public interface ArticuloDAO {
 
     // Agregar un nuevo artículo
     void anadirArticulo(Articulo articulo) throws Exception;
+
+    // Eliminar artículo
+    void eliminarArticulo(String codigo) throws Exception;
 }
