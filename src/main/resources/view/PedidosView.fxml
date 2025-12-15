@@ -5,8 +5,7 @@
 
 <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="800.0" spacing="15.0"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.tiendaonline.controller.PedidoController" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://javafx.com/javafx/21 ">
+      fx:controller="com.tiendaonline.controller.PedidoController">
 
     <!-- TITULO -->
     <Label text="Gestión de Pedidos" textFill="red">

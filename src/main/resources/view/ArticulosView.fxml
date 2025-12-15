@@ -7,8 +7,7 @@
 
 <VBox spacing="15" alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.tiendaonline.controller.ArticuloController"
-      style="-fx-background-color: #f4f4f4;" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://javafx.com/fxml ">
+      style="-fx-background-color: #f4f4f4;">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
