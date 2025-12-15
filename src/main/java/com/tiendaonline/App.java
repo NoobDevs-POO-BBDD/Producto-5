@@ -31,7 +31,7 @@ public class App extends Application {
         controller.setModelo(modelo);
 
         // Preparamos la Escena
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, 1100, 800);
 
         // --- AQUÍ CARGAMOS EL CSS ---
         try {
