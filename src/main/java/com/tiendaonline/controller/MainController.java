@@ -76,11 +76,8 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Parent vista = loader.load();
 
-            // Obtenemos el controlador de la vista que acabamos de cargar
             Object controller = loader.getController();
 
-            // --- INYECCIÓN DEL MODELO ---
-            // Detectamos qué controlador es y le pasamos la conexión a la BBDD
 
             if (controller instanceof ArticuloController) {
                 ((ArticuloController) controller).setModelo(this.modelo);
@@ -92,7 +89,6 @@ public class MainController {
                 ((PedidoController) controller).setModelo(this.modelo);
             }
 
-            // Cambiamos el centro de la pantalla
             rootPane.setCenter(vista);
 
         } catch (IOException e) {
