@@ -20,20 +20,26 @@ public class TiendaOnline {
         // 1. Instancia de la Factoría JPA
         this.factory = new JpaDAOFactory();
 
-        // 2. Obtenemos TODOS los DAOs
+        // 2. Obtenemos TODOS los DAO
         this.articuloDAO = factory.getArticuloDAO();
         this.clienteDAO = factory.getClienteDAO();
         this.pedidoDAO = factory.getPedidoDAO();
     }
 
     // ===================== CLIENTES =====================
-    public Cliente anadirCliente(String email, String nombre, String domicilio, String nif, boolean premium, double cuota) throws Exception {
+
+    public Cliente anadirCliente(String email, String nombre, String domicilio, String nif, boolean premium, double descuentoControlador, int cuotaControlador) throws Exception {
         Cliente cliente;
+
         if (premium) {
+            // Instancia ClientePremium usando sus constantes internas (30, 0.20)
             cliente = new ClientePremium(email, nombre, domicilio, nif, ClientePremium.DESCUENTO_ENVIO_PREMIUM, ClientePremium.CUOTA_ANUAL_PREMIUM);
         } else {
-            cliente = new ClienteStandar(email, nombre, domicilio, nif, ClienteStandar.DESCUENTO_ENVIO_STANDAR);
+            // CORRECCIÓN CLAVE: ClienteStandar solo usa los 4 parámetros base.
+            cliente = new ClienteStandar(email, nombre, domicilio, nif);
         }
+
+        // El DAO se encarga de la persistencia polimórfica.
         clienteDAO.anadirCliente(cliente);
         return cliente;
     }
@@ -196,70 +202,5 @@ public class TiendaOnline {
     public void cargarDatosDePrueba() throws Exception {
         System.out.println("Cargando TODOS los datos de prueba...");
 
-        // 1. CLIENTES
-        anadirClienteSeguro("maria@mail.com", "Maria", "Calle Sol 1", "12345678A", false);
-        anadirClienteSeguro("thabata@mail.com", "Thabata", "Av. Luna 2", "23456789B", false);
-        anadirClienteSeguro("kevin@mail.com", "Kevin", "Plaza Mar 3", "34567890C", false);
-        anadirClienteSeguro("mar@mail.com", "Mar", "Calle Río 4", "45678901D", true);
-        anadirClienteSeguro("anna@mail.com", "Anna", "Av. Monte 5", "56789012E", true);
-
-        // 2. ARTÍCULOS (ACTIVOS)
-        anadirArticuloSeguro("A001", "Laptop Pro 16", 1499.99, 15.0, 120);
-        anadirArticuloSeguro("A002", "Mouse Inalámbrico", 35.5, 5.0, 10);
-        anadirArticuloSeguro("A003", "Teclado Mecánico RGB", 110.0, 10.0, 30);
-        anadirArticuloSeguro("A004", "Monitor Curvo 32", 450.0, 20.0, 180);
-        anadirArticuloSeguro("A005", "Silla Ergonómica Pro", 220.0, 30.0, 60);
-
-        // 3. PEDIDOS (ACTIVOS)
-        anadirPedidoSeguro("P001", "maria@mail.com", "A002", 2);
-        anadirPedidoSeguro("P002", "mar@mail.com", "A003", 1);
-        anadirPedidoSeguro("P003", "thabata@mail.com", "A001", 1);
-
-        anadirPedidoSeguro("P004", "anna@mail.com", "A004", 1);
-        marcarPedidoComoEnviadoSeguro("P004");
-
-        anadirPedidoSeguro("P005", "kevin@mail.com", "A005", 1);
-        marcarPedidoComoEnviadoSeguro("P005");
-
-        System.out.println("Datos de prueba cargados correctamente.");
-    }
-
-    // --- MÉTODOS AUXILIARES PARA EVITAR ERRORES POR DUPLICADOS ---
-
-    private void anadirClienteSeguro(String email, String nombre, String dom, String nif, boolean prem) {
-        try {
-            double cuota = 0;
-            anadirCliente(email, nombre, dom, nif, prem, cuota);
-        } catch (Exception e) { /* Ignorar si ya existe */ }
-    }
-
-    private void anadirArticuloSeguro(String cod, String desc, Double precio, Double gastos, int tiempo) {
-        try {
-            anadirArticulo(cod, desc, precio, gastos, tiempo);
-        } catch (Exception e) { /* Ignorar si ya existe */ }
-    }
-
-    private void anadirPedidoSeguro(String num, String mail, String codArt, int cant) {
-        try {
-            anadirPedido(num, mail, codArt, cant);
-        } catch (Exception e) { /* Ignorar si ya existe o faltan datos */ }
-    }
-
-    private void marcarPedidoComoEnviadoSeguro(String num) {
-        try {
-            marcarPedidoComoEnviado(num);
-        } catch (Exception e) { /* Ignorar si falla */ }
-    }
-
-    public List<Cliente> getListaClientes() {
-        return List.of();
-    }
-
-    public List<Cliente> getListaClientesEstandar() {
-        return List.of();
-    }
-
-    public List<Cliente> getListaClientesPremium() {
-        return List.of();
     }
 }

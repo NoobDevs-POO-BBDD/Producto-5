@@ -1,14 +1,18 @@
 package com.tiendaonline.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("PREMIUM")
 public class ClientePremium extends Cliente {
 
-    public static final double DESCUENTO_ENVIO_PREMIUM = 20.0;
+    // Constantes (Para inicialización o referencia si el formulario no los pide)
+    public static final double DESCUENTO_ENVIO_PREMIUM = 0.20; // 20% en formato 0.xx
     public static final int CUOTA_ANUAL_PREMIUM = 30;
 
+    // **NOTA JPA:** Estos campos se persisten en la tabla 'clientes' y serán NULL para Estándar.
     @Column(name = "descuento_envio")
     private double descuentoEnvio;
 
@@ -17,31 +21,37 @@ public class ClientePremium extends Cliente {
 
     public ClientePremium() {
         super();
+        this.descuentoEnvio = DESCUENTO_ENVIO_PREMIUM;
+        this.cuotaAnual = CUOTA_ANUAL_PREMIUM;
     }
 
-    // 💡 Nota: Usas 'NIF' en mayúsculas aquí, lo cual está bien
-    // porque el constructor del padre tiene el parámetro 'nif' en minúsculas.
+    // Constructor completo
     public ClientePremium(String email, String nombre, String domicilio, String NIF, double descuentoEnvio, int cuotaAnual) {
         super(email, nombre, domicilio, NIF);
         this.descuentoEnvio = descuentoEnvio;
         this.cuotaAnual = cuotaAnual;
     }
 
+    // Implementación de métodos abstractos
+    @Override
+    public int cuotaAnual() {
+        return this.cuotaAnual;
+    }
+
+    @Override
+    public double descuentoEnvio() {
+        return this.descuentoEnvio;
+    }
+
+    // Getters y Setters (Necesarios para JPA)
     public double getDescuentoEnvio() { return descuentoEnvio; }
     public void setDescuentoEnvio(double descuentoEnvio) { this.descuentoEnvio = descuentoEnvio; }
-
     public int getCuotaAnual() { return cuotaAnual; }
     public void setCuotaAnual(int cuotaAnual) { this.cuotaAnual = cuotaAnual; }
-
-    // El método getNIF() ha sido ELIMINADO.
-    // Ahora, los tests llamarán a Cliente.getNIF() (el método puente)
 
     @Override
     public String toString() {
         return super.toString() +
-                " ClientePremium{" +
-                "descuentoEnvio=" + descuentoEnvio +
-                ", cuotaAnual=" + cuotaAnual +
-                '}';
+                " (Tipo: Premium | Cuota: " + cuotaAnual() + " | Descuento: " + (descuentoEnvio() * 100) + "%)";
     }
 }

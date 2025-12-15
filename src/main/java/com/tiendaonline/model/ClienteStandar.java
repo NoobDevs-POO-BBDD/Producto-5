@@ -1,45 +1,37 @@
 package com.tiendaonline.model;
 
-import jakarta.persistence.*; // Usamos jakarta (JPA 3.0)
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("ESTANDAR") // Valor para la columna 'tipo_cliente'
+@DiscriminatorValue("ESTANDAR")
 public class ClienteStandar extends Cliente {
 
-    // Lógica de negocio (se mantiene igual)
     public static final double DESCUENTO_ENVIO_STANDAR = 0.0;
+    public static final int CUOTA_ANUAL_STANDAR = 0;
 
-    @Column(name = "descuento_envio")
-    private double descuentoEnvio = 0.0;
-
-    // Constructor vacío (Obligatorio para JPA)
     public ClienteStandar() {
         super();
     }
 
     // Constructor con parámetros
-    // Llama al constructor del padre (Cliente)
-    public ClienteStandar(String email, String nombre, String domicilio, String NIF, double descuentoEnvio) {
+    public ClienteStandar(String email, String nombre, String domicilio, String NIF) {
         super(email, nombre, domicilio, NIF);
-        this.descuentoEnvio = descuentoEnvio;
     }
 
-    public double getDescuentoEnvio() {
-        return descuentoEnvio;
+    // Implementación de métodos abstractos (devuelven constantes)
+    @Override
+    public int cuotaAnual() {
+        return CUOTA_ANUAL_STANDAR;
     }
 
-    public void setDescuentoEnvio(double descuentoEnvio) {
-        this.descuentoEnvio = descuentoEnvio;
+    @Override
+    public double descuentoEnvio() {
+        return DESCUENTO_ENVIO_STANDAR;
     }
 
     @Override
     public String toString() {
-        // Llama al toString() del padre (Cliente), que incluye el NIF en mayúsculas
-        return super.toString() + " (Tipo: Estandar)";
+        return super.toString() + " (Tipo: Estándar)";
     }
-
-    // ----------------------------------------------------
-    // ❌ MÉTODO ELIMINADO: public String getNIF() { return ""; }
-    // ----------------------------------------------------
-    // La clase ahora hereda correctamente getNIF() y setNIF() del padre Cliente.
 }
